@@ -21,7 +21,7 @@ spec:
         - name: ADMINER_DEFAULT_SERVER
           valueFrom:
             secretKeyRef:
-              name: onepay-secrets
+              name: onepay-api-secrets
               key: MYSQL_SERVER
 ---
 apiVersion: v1
@@ -33,7 +33,7 @@ spec:
     app: adminer
   ports:
     - protocol: TCP
-      nodePort: 31000
+      nodePort: 30000
       port: 8080
       targetPort: 8080
   type: NodePort
