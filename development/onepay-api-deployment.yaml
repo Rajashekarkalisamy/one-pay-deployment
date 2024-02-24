@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onepay-api-deployment
+  namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: onepay-api
+  template:
+    metadata:
+      labels:
+        app: onepay-api
+    spec:
+      containers:
+      - name: onepay-api
+        image: rajasekar9698/one-pay-api:1.0.0
+        ports:
+        - containerPort: 8080
+        workingDir: /usr/src/app
+        env:
+        - name: PORT
+          valueFrom:
+            secretKeyRef:
+              name: onepay-api-secrets
+              key: APP_PORT
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: onepay-api-secrets
+              key: MYSQL_SERVER
+        - name: MYSQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: onepay-api-secrets
+              key: MYSQL_USERNAME
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: onepay-api-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: onepay-api-secrets
+              key: MYSQL_DATABASE
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: onepay-api-secrets
+              key: JWT_SECRET_KEY
+        - name: MONGO_URL
+          valueFrom:
+            secretKeyRef:
+              name: onepay-api-secrets
+              key: MONGO_CONNECTION_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: onepay-api-service
+  namespace: development
+spec:
+  selector:
+    app: onepay-api
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 8080

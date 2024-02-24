@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: rajasekar9698/one-pay-mysql:1.0.0
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "12345"
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: sql-scripts
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mysql-data
+        emptyDir: {}
+      - name: sql-scripts
+        hostPath:
+          path: "/docker-entrypoint-initdb.d"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: development
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+  type: ClusterIP

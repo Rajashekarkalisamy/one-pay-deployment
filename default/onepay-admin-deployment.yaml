@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onepay-admin-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: onepay-admin-app
+  template:
+    metadata:
+      labels:
+        app: onepay-admin-app
+    spec:
+      containers:
+      - name: onepay-admin-app
+        image: rajasekar9698/onepay-admin-app:1.0.0
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: onepay-admin-app-service
+spec:
+  selector:
+    app: onepay-admin-app
+  ports:
+    - protocol: TCP
+      nodePort: 30002
+      port: 3200
+      targetPort: 80
+  type: NodePort
